@@ -4,10 +4,15 @@ const API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY;
 /**
  * APIを叩く共通関数(エラーはすべて呼び出し元へ throw する)
  */
-export async function requestApi(method, endpoint, params = null) {
+export async function requestApi(
+  method: string,
+  endpoint: string,
+  params: Record<string, any> | null = null
+) {
   let url = `${BASE_URL}${endpoint}`;
 
-  const options = {
+  // ② body を後から入れられるように型を明示
+  const options: RequestInit = {
     method: method.toUpperCase(),
     headers: {
       'Content-Type': 'application/json',
@@ -25,29 +30,27 @@ export async function requestApi(method, endpoint, params = null) {
     options.body = JSON.stringify(params);
   }
 
-  // fetch を実行(ネットワーク切断などの場合は fetch 自体が自動で throw されます)
   const response = await fetch(url, options);
 
-  // ステータスコードが 200〜299 以外(エラー)の場合
   if (!response.ok) {
-    // サーバーからエラー用のJSONが返ってきているかもしれないので取得を試みる
     let errorData = null;
     try {
       errorData = await response.json();
     } catch (e) {
-      // JSON形式でないエラー(500 Internal Server Error のHTMLなど)の場合
       errorData = { message: await response.text() };
     }
 
-    // 呼び出し側で使いやすいように、ステータスコードとエラー内容を持たせた Error を投げる
-    const error = new Error(`API Error: ${response.status}`);
-    error.status = response.status;   // 例: 400, 401, 404, 500
-    error.data = errorData;           // サーバーから返ってきた詳細データ
+    // ③ status と data を持てるように型を広げる
+    const error = new Error(`API Error: ${response.status}`) as Error & {
+      status?: number;
+      data?: any;
+    };
+    error.status = response.status;
+    error.data = errorData;
 
-    throw error; // ★ここで呼び出し側へエラーを渡す!
+    throw error;
   }
 
-  // 正常終了(204 No Content のようにレスポンスボディがない場合も考慮)
   if (response.status === 204) return null;
 
   return await response.json();
