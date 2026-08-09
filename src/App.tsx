@@ -42,6 +42,7 @@ function App() {
   const [currentTab, setCurrentTab] = useState("Youtube")
   const [currentCategory, setCurrentCategory] = useState("AI")
   
+  // currentTab, currentCategoryの変数に応じて、useEffectでAPIを叩き分けるようにする
   useEffect(() => {
     const active = categories.find(c => c.id === currentCategory)
     const keyword = active?.label ?? ""
@@ -57,11 +58,11 @@ function App() {
 
     // Newsタブ
     const fetchNews = async () => {
-      const rssUrl = `/api/news?q=${encodeURIComponent(newsKeyword)}&hl=ja&gl=JP&ceid=JP:ja`;      const res = await fetch(rssUrl)
+      const rssUrl = `/api/news?q=${encodeURIComponent(newsKeyword)}&hl=ja&gl=JP&ceid=JP:ja`;
+      const res = await fetch(rssUrl)
       const xmlText = await res.text()
       const xmlDoc = new DOMParser().parseFromString(xmlText, "text/xml")
       const items = xmlDoc.querySelectorAll("item")
-      console.log(items)
 
       const list: NewsItem[] = Array.from(items).slice(0, 10).map(item => ({
         title: item.querySelector("title")?.textContent ?? null,
@@ -79,9 +80,14 @@ function App() {
       fetchNews()
     }
   }, [currentTab, currentCategory])   // ← タブとカテゴリ、どちらが変わっても再取得
+
+
   return (
+    // 外枠
     <div className="p12">
+      {/* タブ */}
       <div className='f fb fc border-bottom border-white w-full mb18'>
+        {/* mapで配列をループ */}
         {tabs.map((tab) => (
           <div
             key={tab.id}
@@ -91,6 +97,7 @@ function App() {
           </div>
         ))}
       </div>
+      {/* カテゴリー */}
       <div className='f fb fl overflow-x-scroll mb18'>
         {categories.map((category) => (
           <button
@@ -103,58 +110,53 @@ function App() {
         ))}
       </div>
 
-
+      {/* カレンとタブがYoutubeの場合 */}
       {currentTab === "Youtube" ? (
-  // ───── Youtubeタブ ─────
-  videos.length === 0 ? (
-    <p>読み込み中...</p>
-  ) : (
-    <div className="row mxn12">
-      {videos.map((video) => (
-        <a
-          key={video.id.videoId}
-          className='col4 block px12 mb18 s-col12 s-px12'
-          href={`https://www.youtube.com/watch?v=${video.id.videoId}`}
-          target="_blank"
-          rel="noopener noreferrer">
-          <div className="f fclm s-full rounded-10 overflow-hidden hover-border-white">
-            <img
-              className='block object-fit-contain s-full mb8'
-              src={video.snippet.thumbnails.medium.url}
-              alt={video.snippet.title} />
-            <p className='fs18 text-white'>{video.snippet.title}</p>
-          </div>
-        </a>
-      ))}
-    </div>
-  )
-) : (
-  // ───── Newsタブ ─────
-  newsList.length === 0 ? (
-    <p>読み込み中...</p>
-  ) : (
-    <div className="">
-      {newsList.map((news, i) => (
-        <a
-          key={news.link ?? i}
-          className='block mb8'
-          href={news.link ?? "#"}
-          target="_blank"
-          rel="noopener noreferrer">
-          <div className="s-full text-left rounded-10 p8 hover-border-white">
-            <p className='fs18 text-white mb2'>{news.title}</p>
-            <p className='fs14 text-gray'>{news.source} ・ {news.pubDate}</p>
-          </div>
-        </a>
-      ))}
-    </div>
-  )
-)}
-
-
-
-
-
+        // ───── Youtubeタブ ─────
+        videos.length === 0 ? (
+          <p>読み込み中...</p>
+        ) : (
+              <div className="row mxn12">
+                {videos.map((video) => (
+                  <a
+                    key={video.id.videoId}
+                    className='col4 block px12 mb18 s-col12 s-px12'
+                    href={`https://www.youtube.com/watch?v=${video.id.videoId}`}
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    <div className="f fclm s-full rounded-10 overflow-hidden hover-border-white">
+                      <img
+                        className='block object-fit-contain s-full mb8'
+                        src={video.snippet.thumbnails.medium.url}
+                        alt={video.snippet.title} />
+                      <p className='fs18 text-white'>{video.snippet.title}</p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            )
+      ) : (
+        // ───── Newsタブ ─────
+        newsList.length === 0 ? (
+          <p>読み込み中...</p>
+        ) : (
+              <div className="">
+                {newsList.map((news, i) => (
+                  <a
+                    key={news.link ?? i}
+                    className='block mb8'
+                    href={news.link ?? "#"}
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    <div className="s-full text-left rounded-10 p8 hover-border-white">
+                      <p className='fs18 text-white mb2'>{news.title}</p>
+                      <p className='fs14 text-gray'>{news.source} ・ {news.pubDate}</p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            )
+      )}
     </div>
   )
 }
