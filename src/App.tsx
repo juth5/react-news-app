@@ -29,10 +29,10 @@ let tabs = [
 ];
 
 let categories = [
-  { id: "AI", color: "#7C6BF5", label: "AI テレ東BIZ" },
-  { id: "MCPサーバー", color: "#14B8A6", label: "MCPサーバー テレ東BIZ" },
-  { id: "OpenAI", color: "#10A37F", label: "OpenAI テレ東BIZ" },
-  { id: "Anthropic", color: "#D97757", label: "Anthropic テレ東BIZ" },
+  { id: "AI", color: "#7C6BF5", label: "AI テレ東BIZ", newsLabel: "AI news 最新"},
+  { id: "MCPサーバー", color: "#14B8A6", label: "MCPサーバー テレ東BIZ", newsLabel: "MCPサーバー news 最新"},
+  { id: "OpenAI", color: "#10A37F", label: "OpenAI テレ東BIZ", newsLabel: "OpenAI news 最新"},
+  { id: "Anthropic", color: "#D97757", label: "Anthropic テレ東BIZ", newsLabel: "Anthropic news 最新"},
 ];
 
 function App() {
@@ -45,6 +45,7 @@ function App() {
   useEffect(() => {
     const active = categories.find(c => c.id === currentCategory)
     const keyword = active?.label ?? ""
+    const newsKeyword = active?.newsLabel ?? ""
 
     // Youtubeタブ
     const fetchVideos = async () => {
@@ -56,13 +57,12 @@ function App() {
 
     // Newsタブ
     const fetchNews = async () => {
-      // ↓ https://news.google.com を /api/news に変更
-      const rssUrl = `/api/news/rss/search?q=${encodeURIComponent(keyword)}&hl=ja&gl=JP&ceid=JP:ja`
+      const rssUrl = `/api/news/rss/search?q=${encodeURIComponent(newsKeyword)}&hl=ja&gl=JP&ceid=JP:ja`;
       const res = await fetch(rssUrl)
-      console.log("RSS URL:", res)
       const xmlText = await res.text()
       const xmlDoc = new DOMParser().parseFromString(xmlText, "text/xml")
       const items = xmlDoc.querySelectorAll("item")
+      console.log(items)
 
       const list: NewsItem[] = Array.from(items).slice(0, 10).map(item => ({
         title: item.querySelector("title")?.textContent ?? null,
@@ -86,7 +86,7 @@ function App() {
         {tabs.map((tab) => (
           <div
             key={tab.id}
-            className={`w128 fs20 text-white px20 py10 ${currentTab === tab.id ? tab.color : 'bg-gray'} bold border border-white rounded-top-20 mr20 mr0-last`}
+            className={`w128 fs20 text-white px20 py10 cursor-pointer ${currentTab === tab.id ? tab.color : 'bg-gray'} bold border border-white rounded-top-20 mr20 mr0-last`}
             onClick={() => setCurrentTab(tab.id)}>
             {tab.id}
           </div>
@@ -134,16 +134,16 @@ function App() {
   newsList.length === 0 ? (
     <p>読み込み中...</p>
   ) : (
-    <div className="row mxn12">
+    <div className="">
       {newsList.map((news, i) => (
         <a
           key={news.link ?? i}
-          className='col4 block px12 mb18 s-col12 s-px12'
+          className='block mb8'
           href={news.link ?? "#"}
           target="_blank"
           rel="noopener noreferrer">
-          <div className="f fclm s-full rounded-10 p12 hover-border-white">
-            <p className='fs18 text-white mb8'>{news.title}</p>
+          <div className="s-full text-left rounded-10 p8 hover-border-white">
+            <p className='fs18 text-white mb2'>{news.title}</p>
             <p className='fs14 text-gray'>{news.source} ・ {news.pubDate}</p>
           </div>
         </a>
