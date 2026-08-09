@@ -84,14 +84,14 @@ function App() {
 
   return (
     // 外枠
-    <div className="p12">
+    <div className="container-1024 p12">
       {/* タブ */}
       <div className='f fb fc border-bottom border-white w-full mb18'>
         {/* mapで配列をループ */}
         {tabs.map((tab) => (
           <div
             key={tab.id}
-            className={`w128 fs20 text-white px20 py10 cursor-pointer ${currentTab === tab.id ? tab.color : 'bg-gray'} bold border border-white rounded-top-20 mr20 mr0-last`}
+            className={`w128 fs20 text-center text-white px20 py10 cursor-pointer ${currentTab === tab.id ? tab.color : 'bg-gray'} bold border border-white rounded-top-20 mr20 mr0-last`}
             onClick={() => setCurrentTab(tab.id)}>
             {tab.id}
           </div>
@@ -129,7 +129,7 @@ function App() {
                         className='block object-fit-contain s-full mb8'
                         src={video.snippet.thumbnails.medium.url}
                         alt={video.snippet.title} />
-                      <p className='fs18 text-white'>{video.snippet.title}</p>
+                      <p className='fs16 text-white s-fs14'>{video.snippet.title}</p>
                     </div>
                   </a>
                 ))}
