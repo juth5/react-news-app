@@ -10,7 +10,8 @@ export default defineConfig({
       '/api/news': {
         target: 'https://news.google.com',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/news/, ''),
+        // /api/news → /rss/search に変換して転送
+        rewrite: (path) => path.replace(/^\/api\/news/, '/rss/search'),
       },
     },
   },

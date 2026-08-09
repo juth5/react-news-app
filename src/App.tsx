@@ -57,8 +57,7 @@ function App() {
 
     // Newsタブ
     const fetchNews = async () => {
-      const rssUrl = `/api/news/rss/search?q=${encodeURIComponent(newsKeyword)}&hl=ja&gl=JP&ceid=JP:ja`;
-      const res = await fetch(rssUrl)
+      const rssUrl = `/api/news?q=${encodeURIComponent(newsKeyword)}&hl=ja&gl=JP&ceid=JP:ja`;      const res = await fetch(rssUrl)
       const xmlText = await res.text()
       const xmlDoc = new DOMParser().parseFromString(xmlText, "text/xml")
       const items = xmlDoc.querySelectorAll("item")
