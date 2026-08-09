@@ -83,80 +83,81 @@ function App() {
 
 
   return (
-    // 外枠
-    <div className="container-1024 p12">
-      {/* タブ */}
-      <div className='f fb fc border-bottom border-white w-full mb18'>
-        {/* mapで配列をループ */}
-        {tabs.map((tab) => (
-          <div
-            key={tab.id}
-            className={`w128 fs20 text-center text-white px20 py10 cursor-pointer ${currentTab === tab.id ? tab.color : 'bg-gray'} bold border border-white rounded-top-20 mr20 mr0-last`}
-            onClick={() => setCurrentTab(tab.id)}>
-            {tab.id}
-          </div>
-        ))}
-      </div>
-      {/* カテゴリー */}
-      <div className='f fb fl overflow-x-scroll mb18'>
-        {categories.map((category) => (
-          <button
-            key={category.id}
-            className={`${currentCategory === category.id ? "border-transparent" : "border-white" } flex-fixed border text-white rounded-10 px12 py2 mr8`}
-            style={currentCategory === category.id ? { backgroundColor: category.color } : undefined }
-            onClick={() => setCurrentCategory(category.id)}>
-            {category.id}
-          </button>
-        ))}
-      </div>
+    <div className='py20'>
+      <div className="container-1024">
+        {/* タブ */}
+        <div className='f fb fc border-bottom border-white w-full mb18'>
+          {/* mapで配列をループ */}
+          {tabs.map((tab) => (
+            <div
+              key={tab.id}
+              className={`w128 fs20 text-center text-white px20 py6 cursor-pointer s-fs18 s-py6 ${currentTab === tab.id ? tab.color : 'bg-gray'} bold border border-white rounded-top-20 mr20 mr0-last`}
+              onClick={() => setCurrentTab(tab.id)}>
+              {tab.id}
+            </div>
+          ))}
+        </div>
+        {/* カテゴリー */}
+        <div className='f fb fl overflow-x-scroll mb18 s-px12'>
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              className={`${currentCategory === category.id ? "border-transparent" : "border-white" } flex-fixed border text-white rounded-10 px12 py2 mr8`}
+              style={currentCategory === category.id ? { backgroundColor: category.color } : undefined }
+              onClick={() => setCurrentCategory(category.id)}>
+              {category.id}
+            </button>
+          ))}
+        </div>
 
-      {/* カレンとタブがYoutubeの場合 */}
-      {currentTab === "Youtube" ? (
-        // ───── Youtubeタブ ─────
-        videos.length === 0 ? (
-          <p>読み込み中...</p>
+        {/* カレンとタブがYoutubeの場合 */}
+        {currentTab === "Youtube" ? (
+          // ───── Youtubeタブ ─────
+          videos.length === 0 ? (
+            <p>読み込み中...</p>
+          ) : (
+                <div className="row mxn12 s-px12">
+                  {videos.map((video) => (
+                    <a
+                      key={video.id.videoId}
+                      className='col4 block px12 mb18 s-col12 s-px12'
+                      href={`https://www.youtube.com/watch?v=${video.id.videoId}`}
+                      target="_blank"
+                      rel="noopener noreferrer">
+                      <div className="f fclm s-full rounded-10 overflow-hidden hover-border-white">
+                        <img
+                          className='block object-fit-contain s-full mb8'
+                          src={video.snippet.thumbnails.medium.url}
+                          alt={video.snippet.title} />
+                        <p className='p8 fs16 text-white s-fs14'>{video.snippet.title}</p>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              )
         ) : (
-              <div className="row mxn12">
-                {videos.map((video) => (
-                  <a
-                    key={video.id.videoId}
-                    className='col4 block px12 mb18 s-col12 s-px12'
-                    href={`https://www.youtube.com/watch?v=${video.id.videoId}`}
-                    target="_blank"
-                    rel="noopener noreferrer">
-                    <div className="f fclm s-full rounded-10 overflow-hidden hover-border-white">
-                      <img
-                        className='block object-fit-contain s-full mb8'
-                        src={video.snippet.thumbnails.medium.url}
-                        alt={video.snippet.title} />
-                      <p className='fs16 text-white s-fs14'>{video.snippet.title}</p>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            )
-      ) : (
-        // ───── Newsタブ ─────
-        newsList.length === 0 ? (
-          <p>読み込み中...</p>
-        ) : (
-              <div className="">
-                {newsList.map((news, i) => (
-                  <a
-                    key={news.link ?? i}
-                    className='block mb8'
-                    href={news.link ?? "#"}
-                    target="_blank"
-                    rel="noopener noreferrer">
-                    <div className="s-full text-left rounded-10 p8 hover-border-white">
-                      <p className='fs18 text-white mb2'>{news.title}</p>
-                      <p className='fs14 text-gray'>{news.source} ・ {news.pubDate}</p>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            )
-      )}
+          // ───── Newsタブ ─────
+          newsList.length === 0 ? (
+            <p>読み込み中...</p>
+          ) : (
+                <div className="s-px12">
+                  {newsList.map((news, i) => (
+                    <a
+                      key={news.link ?? i}
+                      className='block mb8'
+                      href={news.link ?? "#"}
+                      target="_blank"
+                      rel="noopener noreferrer">
+                      <div className="s-full text-left rounded-10 p8 hover-border-white">
+                        <p className='fs18 text-white mb2'>{news.title}</p>
+                        <p className='fs14 text-gray'>{news.source} ・ {news.pubDate}</p>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              )
+        )}
+      </div>
     </div>
   )
 }
