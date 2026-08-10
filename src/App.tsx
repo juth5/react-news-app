@@ -102,7 +102,7 @@ function App() {
           {categories.map((category) => (
             <button
               key={category.id}
-              className={`${currentCategory === category.id ? "border-transparent" : "border-white" } shrink-0 grow-0 border text-white rounded-[10px] px-[12px] py-[2px] mr-[8px]`}
+              className={`${currentCategory === category.id ? "border-transparent" : "border-white" } shrink-0 grow-0 border text-white rounded-[10px] px-[12px] py-[2px] mr-[8px] cursor-pointer`}
               style={currentCategory === category.id ? { backgroundColor: category.color } : undefined }
               onClick={() => setCurrentCategory(category.id)}>
               {category.id}
@@ -120,7 +120,7 @@ function App() {
                   {videos.map((video) => (
                     <a
                       key={video.id.videoId}
-                      className='w-full sm:w-1/3 block px-[12px] mb-[18px]'
+                      className='w-full sm:w-1/3 block px-[12px] mb-[18px] hover:bg-white/20 rounded-[10px] py-[12px]'
                       href={`https://www.youtube.com/watch?v=${video.id.videoId}`}
                       target="_blank"
                       rel="noopener noreferrer">
