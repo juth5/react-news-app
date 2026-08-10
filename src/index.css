@@ -48,12 +48,7 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
-
-
-.hover-border-white {
-  border: 2px solid transparent; /* または元の色 */
-  transition: border-color 0.2s ease; /* なめらかに変化させたい場合 */
-}
-.hover-border-white:hover {
-  border-color: #ffffff; /* または white */
+  
+.hover-bg-white:hover {
+  background-color: #ffffff; /* または white */
 }

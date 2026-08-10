@@ -144,11 +144,11 @@ function App() {
                   {newsList.map((news, i) => (
                     <a
                       key={news.link ?? i}
-                      className='block mb-[8px]'
+                      className='block border-b border-gray-500 hover:bg-white/10'
                       href={news.link ?? "#"}
                       target="_blank"
                       rel="noopener noreferrer">
-                      <div className="size-full text-left rounded-[10px] p-[8px] hover-border-white">
+                      <div className="size-full text-left rounded-[10px] p-[10px]">
                         <p className='text-lg text-white mb-[2px]'>{news.title}</p>
                         <p className='text-sm text-gray-500'>{news.source} ・ {news.pubDate}</p>
                       </div>
