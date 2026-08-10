@@ -24,8 +24,8 @@ type YoutubeSearchResponse = {
   items: YoutubeVideo[]
 }
 let tabs = [
-  { id: "Youtube", color: "bg-red" },
-  { id: "News", color: "bg-blue" }
+  { id: "Youtube", color: "bg-red-500" },
+  { id: "News", color: "bg-blue-500" }
 ];
 
 let categories = [
@@ -83,26 +83,26 @@ function App() {
 
 
   return (
-    <div className='py20'>
-      <div className="container-1024">
+    <div className='py-[20px]'>
+      <div className="max-w-5xl mx-auto">
         {/* タブ */}
-        <div className='f fb fc border-bottom border-white w-full mb18'>
+        <div className='flex items-end justify-center border-b border-white w-full mb-[18px]'>
           {/* mapで配列をループ */}
           {tabs.map((tab) => (
             <div
               key={tab.id}
-              className={`w128 fs20 text-center text-white px20 py6 cursor-pointer s-fs18 s-py6 ${currentTab === tab.id ? tab.color : 'bg-gray'} bold border border-white rounded-top-20 mr20 mr0-last`}
+              className={`w-32 text-center text-white px-[20px] py-[6px] cursor-pointer text-lg sm:text-xl ${currentTab === tab.id ? tab.color : 'bg-gray-500'} font-bold border border-white rounded-t-[20px] mr-[20px] last:mr-0`}
               onClick={() => setCurrentTab(tab.id)}>
               {tab.id}
             </div>
           ))}
         </div>
         {/* カテゴリー */}
-        <div className='f fb fl overflow-x-scroll mb18 s-px12'>
+        <div className='flex items-end justify-start overflow-x-scroll overflow-y-hidden mb-[18px] px-[12px] sm:px-0'>
           {categories.map((category) => (
             <button
               key={category.id}
-              className={`${currentCategory === category.id ? "border-transparent" : "border-white" } flex-fixed border text-white rounded-10 px12 py2 mr8`}
+              className={`${currentCategory === category.id ? "border-transparent" : "border-white" } shrink-0 grow-0 border text-white rounded-[10px] px-[12px] py-[2px] mr-[8px]`}
               style={currentCategory === category.id ? { backgroundColor: category.color } : undefined }
               onClick={() => setCurrentCategory(category.id)}>
               {category.id}
@@ -114,22 +114,22 @@ function App() {
         {currentTab === "Youtube" ? (
           // ───── Youtubeタブ ─────
           videos.length === 0 ? (
-            <p>読み込み中...</p>
+            <p className='text-white text-center'>読み込み中...</p>
           ) : (
-                <div className="row mxn12 s-px12">
+                <div className="flex flex-wrap mx-0 sm:-mx-[12px] px-[12px] sm:px-0">
                   {videos.map((video) => (
                     <a
                       key={video.id.videoId}
-                      className='col4 block px12 mb18 s-col12 s-px12'
+                      className='w-full sm:w-1/3 block px-[12px] mb-[18px]'
                       href={`https://www.youtube.com/watch?v=${video.id.videoId}`}
                       target="_blank"
                       rel="noopener noreferrer">
-                      <div className="f fclm s-full rounded-10 overflow-hidden hover-border-white">
+                      <div className="flex flex-col size-full rounded-[10px] overflow-hidden hover-border-white">
                         <img
-                          className='block object-fit-contain s-full mb8'
+                          className='block object-contain size-full mb-[8px]'
                           src={video.snippet.thumbnails.medium.url}
                           alt={video.snippet.title} />
-                        <p className='p8 fs16 text-white s-fs14'>{video.snippet.title}</p>
+                        <p className='p-[8px] text-sm sm:text-base text-white'>{video.snippet.title}</p>
                       </div>
                     </a>
                   ))}
@@ -140,17 +140,17 @@ function App() {
           newsList.length === 0 ? (
             <p>読み込み中...</p>
           ) : (
-                <div className="s-px12">
+                <div className="px-[12px] sm:px-0">
                   {newsList.map((news, i) => (
                     <a
                       key={news.link ?? i}
-                      className='block mb8'
+                      className='block mb-[8px]'
                       href={news.link ?? "#"}
                       target="_blank"
                       rel="noopener noreferrer">
-                      <div className="s-full text-left rounded-10 p8 hover-border-white">
-                        <p className='fs18 text-white mb2'>{news.title}</p>
-                        <p className='fs14 text-gray'>{news.source} ・ {news.pubDate}</p>
+                      <div className="size-full text-left rounded-[10px] p-[8px] hover-border-white">
+                        <p className='text-lg text-white mb-[2px]'>{news.title}</p>
+                        <p className='text-sm text-gray-500'>{news.source} ・ {news.pubDate}</p>
                       </div>
                     </a>
                   ))}
