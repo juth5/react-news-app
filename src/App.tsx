@@ -120,7 +120,7 @@ function App() {
                   {videos.map((video) => (
                     <a
                       key={video.id.videoId}
-                      className='w-full sm:w-1/3 block px-[12px] mb-[18px] hover:bg-white/20 rounded-[10px] py-[12px]'
+                      className='w-full sm:w-1/3 block px-[12px] mb-[18px] hover:bg-white/20 transition-colors duration-200 rounded-[10px] py-[12px]'
                       href={`https://www.youtube.com/watch?v=${video.id.videoId}`}
                       target="_blank"
                       rel="noopener noreferrer">
@@ -144,13 +144,13 @@ function App() {
                   {newsList.map((news, i) => (
                     <a
                       key={news.link ?? i}
-                      className='block border-b border-gray-500 hover:bg-white/10'
+                      className='block border-b border-gray-500 hover:bg-white/20 transition-colors duration-300'
                       href={news.link ?? "#"}
                       target="_blank"
                       rel="noopener noreferrer">
                       <div className="size-full text-left rounded-[10px] p-[10px]">
                         <p className='text-lg text-white mb-[2px]'>{news.title}</p>
-                        <p className='text-sm text-gray-500'>{news.source} ・ {news.pubDate}</p>
+                        <p className='text-sm text-gray-400'>{news.source} ・ {news.pubDate}</p>
                       </div>
                     </a>
                   ))}
