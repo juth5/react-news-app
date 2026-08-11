@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import app from './lib/app'
+import Category from './items/category/Category'
 
 type YoutubeVideo = {
   id: { videoId: string }
@@ -28,7 +29,16 @@ let tabs = [
   { id: "News", color: "bg-blue-500" }
 ];
 
-let categories = [
+// このページがAPIを叩くために必要なデータの形。Categoryモジュールが要求する
+// CategoryOption(id, color)を構造的に満たしているので、そのままpropsに渡せる。
+type CategoryData = {
+  id: string
+  color: string
+  label: string
+  newsLabel: string
+}
+
+let categories: CategoryData[] = [
   { id: "AI", color: "#7C6BF5", label: "AI テレ東BIZ", newsLabel: "AI news 最新"},
   { id: "MCPサーバー", color: "#14B8A6", label: "MCPサーバー テレ東BIZ", newsLabel: "MCPサーバー news 最新"},
   { id: "OpenAI", color: "#10A37F", label: "OpenAI テレ東BIZ", newsLabel: "OpenAI news 最新"},
@@ -98,17 +108,11 @@ function App() {
           ))}
         </div>
         {/* カテゴリー */}
-        <div className='flex items-end justify-start overflow-x-scroll overflow-y-hidden mb-[18px] px-[12px] sm:px-0'>
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              className={`${currentCategory === category.id ? "border-transparent" : "border-white" } shrink-0 grow-0 border text-white rounded-[10px] px-[12px] py-[2px] mr-[8px] cursor-pointer`}
-              style={currentCategory === category.id ? { backgroundColor: category.color } : undefined }
-              onClick={() => setCurrentCategory(category.id)}>
-              {category.id}
-            </button>
-          ))}
-        </div>
+        <Category
+          categories={categories}
+          currentCategoryId={currentCategory}
+          onSelect={(category) => setCurrentCategory(category.id)}
+        />
 
         {/* カレンとタブがYoutubeの場合 */}
         {currentTab === "Youtube" ? (
