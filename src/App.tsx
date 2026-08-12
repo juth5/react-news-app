@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import app from './lib/app'
-import Category from './items/category/Category'
-import Tab from './items/Tab'
+import Category from './items/modules/Category'
+import Tab from './items/modules/Tab'
 
 
 type YoutubeVideo = {
@@ -103,7 +103,7 @@ function App() {
           currentTabId={currentTab}
           onSelect={(tab) => setCurrentTab(tab.id)}
         />
-        
+
         {/* カテゴリー */}
         <Category
           categories={categories}
@@ -139,7 +139,7 @@ function App() {
         ) : (
           // ───── Newsタブ ─────
           newsList.length === 0 ? (
-            <p>読み込み中...</p>
+            <p className='text-white text-center'>読み込み中...</p>
           ) : (
                 <div className="px-[12px] sm:px-0">
                   {newsList.map((news, i) => (
