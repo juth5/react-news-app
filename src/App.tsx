@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import app from './lib/app'
 import Category from './items/category/Category'
+import Tab from './items/Tab'
+
 
 type YoutubeVideo = {
   id: { videoId: string }
@@ -96,17 +98,12 @@ function App() {
     <div className='py-[20px]'>
       <div className="max-w-5xl mx-auto">
         {/* タブ */}
-        <div className='flex items-end justify-center border-b border-white w-full mb-[18px]'>
-          {/* mapで配列をループ */}
-          {tabs.map((tab) => (
-            <div
-              key={tab.id}
-              className={`w-32 text-center text-white px-[20px] py-[6px] cursor-pointer text-lg sm:text-xl ${currentTab === tab.id ? tab.color : 'bg-gray-500'} font-bold border border-white rounded-t-[20px] mr-[20px] last:mr-0`}
-              onClick={() => setCurrentTab(tab.id)}>
-              {tab.id}
-            </div>
-          ))}
-        </div>
+        <Tab
+          tabs={tabs}
+          currentTabId={currentTab}
+          onSelect={(tab) => setCurrentTab(tab.id)}
+        />
+        
         {/* カテゴリー */}
         <Category
           categories={categories}
