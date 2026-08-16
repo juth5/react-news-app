@@ -130,7 +130,7 @@ function App() {
                       rel="noopener noreferrer">
                       <div className="flex flex-col size-full rounded-[10px] overflow-hidden hover-border-white">
                         <img
-                          className='block object-contain size-full mb-[8px]'
+                          className='block object-contain mb-[8px]'
                           src={video.snippet.thumbnails.medium.url}
                           alt={video.snippet.title} />
                         <p className='p-[8px] text-sm sm:text-base text-white'>{video.snippet.title}</p>
