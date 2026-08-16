@@ -31,16 +31,17 @@ export async function requestApi(
   }
 
   const response = await fetch(url, options);
-
+  // ① エラー時に status と data を持てるように型を広げる
   if (!response.ok) {
-    let errorData = null;
+    const bodyText = await response.text();
+    let errorData;
     try {
-      errorData = await response.json();
+      errorData = JSON.parse(bodyText);
     } catch (e) {
-      errorData = { message: await response.text() };
+      errorData = { message: bodyText };
     }
 
-    // ③ status と data を持てるように型を広げる
+    // ② エラーオブジェクトに status と data を追加して throw
     const error = new Error(`API Error: ${response.status}`) as Error & {
       status?: number;
       data?: any;

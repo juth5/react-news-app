@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import app from './lib/app'
 import Category from './items/modules/Category'
 import Tab from './items/modules/Tab'
 
-
+// 型定義
 type YoutubeVideo = {
   id: { videoId: string }
   snippet: {
@@ -26,6 +27,7 @@ type NewsItem = {
 type YoutubeSearchResponse = {
   items: YoutubeVideo[]
 }
+
 let tabs = [
   { id: "Youtube", color: "bg-red-500" },
   { id: "News", color: "bg-blue-500" }
@@ -47,51 +49,59 @@ let categories: CategoryData[] = [
   { id: "Anthropic", color: "#D97757", label: "Anthropic テレ東BIZ", newsLabel: "Anthropic news 最新"},
 ];
 
-function App() {
+// Youtubeタブ用のデータ取得(queryFn)
+async function fetchVideos(keyword: string): Promise<YoutubeVideo[]> {
+  const res: YoutubeSearchResponse = await app.api.requestApi('GET', '/search', {
+    part: 'snippet', type: 'video', q: keyword, maxResults: 9,
+  })
+  return res.items
+}
 
-  const [videos, setVideos] = useState<YoutubeVideo[]>([])
-  const [newsList, setNewsList] = useState<NewsItem[]>([])   // News用に追加
+// Newsタブ用のデータ取得(queryFn)
+async function fetchNews(newsKeyword: string): Promise<NewsItem[]> {
+  const rssUrl = `/api/news?q=${encodeURIComponent(newsKeyword)}&hl=ja&gl=JP&ceid=JP:ja`;
+  const res = await fetch(rssUrl)
+  const xmlText = await res.text()
+  const xmlDoc = new DOMParser().parseFromString(xmlText, "text/xml")
+  const items = xmlDoc.querySelectorAll("item")
+
+  return Array.from(items).slice(0, 10).map(item => ({
+    title: item.querySelector("title")?.textContent ?? null,
+    link: item.querySelector("link")?.textContent ?? null,
+    pubDate: item.querySelector("pubDate")?.textContent ?? null,
+    source: item.querySelector("source")?.textContent ?? null,
+  }))
+}
+function App() {
   const [currentTab, setCurrentTab] = useState("Youtube")
   const [currentCategory, setCurrentCategory] = useState("AI")
-  
-  // currentTab, currentCategoryの変数に応じて、useEffectでAPIを叩き分けるようにする
-  useEffect(() => {
-    const active = categories.find(c => c.id === currentCategory)
-    const keyword = active?.label ?? ""
-    const newsKeyword = active?.newsLabel ?? ""
 
-    // Youtubeタブ
-    const fetchVideos = async () => {
-      const res: YoutubeSearchResponse = await app.api.requestApi('GET', '/search', {
-        part: 'snippet', type: 'video', q: keyword, maxResults: 9,
-      })
-      setVideos(res.items)
-    }
+  const active = categories.find(c => c.id === currentCategory)
+  const keyword = active?.label ?? ""
+  const newsKeyword = active?.newsLabel ?? ""
 
-    // Newsタブ
-    const fetchNews = async () => {
-      const rssUrl = `/api/news?q=${encodeURIComponent(newsKeyword)}&hl=ja&gl=JP&ceid=JP:ja`;
-      const res = await fetch(rssUrl)
-      const xmlText = await res.text()
-      const xmlDoc = new DOMParser().parseFromString(xmlText, "text/xml")
-      const items = xmlDoc.querySelectorAll("item")
+  // currentTabがYoutubeのときだけ有効化(enabled)される、Youtube用のクエリ
+  const { data: videos = [], isLoading: isVideosLoading, isError: isVideosError, error: videosError, status: videosStatus } = useQuery({
+    queryKey: ['videos', keyword],
+    queryFn: () => fetchVideos(keyword),
+    enabled: currentTab === "Youtube",
+  })
 
-      const list: NewsItem[] = Array.from(items).slice(0, 10).map(item => ({
-        title: item.querySelector("title")?.textContent ?? null,
-        link: item.querySelector("link")?.textContent ?? null,
-        pubDate: item.querySelector("pubDate")?.textContent ?? null,
-        source: item.querySelector("source")?.textContent ?? null,
-      }))
-      setNewsList(list)
-    }
+  // videosStatusが変わった瞬間だけ、成功/失敗をalertで知らせる
+  // useEffect(() => {
+  //   if (videosStatus === 'success') {
+  //     alert("動画の取得に成功しました")
+  //   } else if (videosStatus === 'error') {
+  //     alert(`動画の取得に失敗しました: ${videosError.message}`)
+  //   }
+  // }, [videosStatus])
 
-    // currentTab で叩き分ける
-    if (currentTab === "Youtube") {
-      fetchVideos()
-    } else {
-      fetchNews()
-    }
-  }, [currentTab, currentCategory])   // ← タブとカテゴリ、どちらが変わっても再取得
+  // currentTabがNewsのときだけ有効化(enabled)される、News用のクエリ
+  const { data: newsList = [], isLoading: isNewsLoading, isError: isNewsError, error: newsError } = useQuery({
+    queryKey: ['news', newsKeyword],
+    queryFn: () => fetchNews(newsKeyword),
+    enabled: currentTab === "News",
+  })
 
 
   return (
@@ -114,8 +124,10 @@ function App() {
         {/* カレンとタブがYoutubeの場合 */}
         {currentTab === "Youtube" ? (
           // ───── Youtubeタブ ─────
-          videos.length === 0 ? (
+          isVideosLoading ? (
             <p className='text-white text-center'>読み込み中...</p>
+          ) : isVideosError ? (
+            <p className='text-white text-center'>動画の取得に失敗しました: {videosError.message}</p>
           ) : (
                 <div className="flex flex-wrap mx-0 sm:-mx-[12px] px-[12px] sm:px-0">
                   {videos.map((video) => (
@@ -138,8 +150,10 @@ function App() {
               )
         ) : (
           // ───── Newsタブ ─────
-          newsList.length === 0 ? (
+          isNewsLoading ? (
             <p className='text-white text-center'>読み込み中...</p>
+          ) : isNewsError ? (
+            <p className='text-white text-center'>ニュースの取得に失敗しました: {newsError.message}</p>
           ) : (
                 <div className="px-[12px] sm:px-0">
                   {newsList.map((news, i) => (
