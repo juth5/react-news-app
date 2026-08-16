@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import app from './lib/app'
 import Category from './items/modules/Category'
@@ -81,20 +81,11 @@ function App() {
   const newsKeyword = active?.newsLabel ?? ""
 
   // currentTabがYoutubeのときだけ有効化(enabled)される、Youtube用のクエリ
-  const { data: videos = [], isLoading: isVideosLoading, isError: isVideosError, error: videosError, status: videosStatus } = useQuery({
+  const { data: videos = [], isLoading: isVideosLoading, isError: isVideosError, error: videosError } = useQuery({
     queryKey: ['videos', keyword],
     queryFn: () => fetchVideos(keyword),
     enabled: currentTab === "Youtube",
   })
-
-  // videosStatusが変わった瞬間だけ、成功/失敗をalertで知らせる
-  // useEffect(() => {
-  //   if (videosStatus === 'success') {
-  //     alert("動画の取得に成功しました")
-  //   } else if (videosStatus === 'error') {
-  //     alert(`動画の取得に失敗しました: ${videosError.message}`)
-  //   }
-  // }, [videosStatus])
 
   // currentTabがNewsのときだけ有効化(enabled)される、News用のクエリ
   const { data: newsList = [], isLoading: isNewsLoading, isError: isNewsError, error: newsError } = useQuery({
