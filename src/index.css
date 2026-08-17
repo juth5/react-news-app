@@ -52,3 +52,7 @@ code {
 .hover-bg-white:hover {
   background-color: #ffffff; /* または white */
 }
+
+.scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }

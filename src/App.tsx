@@ -1,32 +1,8 @@
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import app from './lib/app'
 import Category from './items/modules/Category'
 import Tab from './items/modules/Tab'
-
-// 型定義
-type YoutubeVideo = {
-  id: { videoId: string }
-  snippet: {
-    title: string
-    description: string
-    channelTitle: string
-    thumbnails: {
-      medium: { url: string }
-    }
-  }
-}
-
-type NewsItem = {
-  title: string | null
-  link: string | null
-  pubDate: string | null
-  source: string | null
-}
-
-type YoutubeSearchResponse = {
-  items: YoutubeVideo[]
-}
+import { useVideos } from './hooks/useVideos'
+import { useNews } from './hooks/useNews'
 
 let tabs = [
   { id: "Youtube", color: "bg-red-500" },
@@ -49,29 +25,6 @@ let categories: CategoryData[] = [
   { id: "Anthropic", color: "#D97757", label: "Anthropic テレ東BIZ", newsLabel: "Anthropic news 最新"},
 ];
 
-// Youtubeタブ用のデータ取得(queryFn)
-async function fetchVideos(keyword: string): Promise<YoutubeVideo[]> {
-  const res: YoutubeSearchResponse = await app.api.requestApi('GET', '/search', {
-    part: 'snippet', type: 'video', q: keyword, maxResults: 9,
-  })
-  return res.items
-}
-
-// Newsタブ用のデータ取得(queryFn)
-async function fetchNews(newsKeyword: string): Promise<NewsItem[]> {
-  const rssUrl = `/api/news?q=${encodeURIComponent(newsKeyword)}&hl=ja&gl=JP&ceid=JP:ja`;
-  const res = await fetch(rssUrl)
-  const xmlText = await res.text()
-  const xmlDoc = new DOMParser().parseFromString(xmlText, "text/xml")
-  const items = xmlDoc.querySelectorAll("item")
-
-  return Array.from(items).slice(0, 10).map(item => ({
-    title: item.querySelector("title")?.textContent ?? null,
-    link: item.querySelector("link")?.textContent ?? null,
-    pubDate: item.querySelector("pubDate")?.textContent ?? null,
-    source: item.querySelector("source")?.textContent ?? null,
-  }))
-}
 function App() {
   const [currentTab, setCurrentTab] = useState("Youtube")
   const [currentCategory, setCurrentCategory] = useState("AI")
@@ -81,18 +34,10 @@ function App() {
   const newsKeyword = active?.newsLabel ?? ""
 
   // currentTabがYoutubeのときだけ有効化(enabled)される、Youtube用のクエリ
-  const { data: videos = [], isLoading: isVideosLoading, isError: isVideosError, error: videosError } = useQuery({
-    queryKey: ['videos', keyword],
-    queryFn: () => fetchVideos(keyword),
-    enabled: currentTab === "Youtube",
-  })
+  const { data: videos = [], isLoading: isVideosLoading, isError: isVideosError, error: videosError } = useVideos(keyword, currentTab === "Youtube")
 
   // currentTabがNewsのときだけ有効化(enabled)される、News用のクエリ
-  const { data: newsList = [], isLoading: isNewsLoading, isError: isNewsError, error: newsError } = useQuery({
-    queryKey: ['news', newsKeyword],
-    queryFn: () => fetchNews(newsKeyword),
-    enabled: currentTab === "News",
-  })
+  const { data: newsList = [], isLoading: isNewsLoading, isError: isNewsError, error: newsError } = useNews(newsKeyword, currentTab === "News")
 
 
   return (

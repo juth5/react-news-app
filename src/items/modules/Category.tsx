@@ -16,7 +16,7 @@ type CategoryProps = {
 // APIを叩く処理は使っている側(page側)のuseEffectなどに任せる。
 function Category({ categories, currentCategoryId, onSelect }: CategoryProps) {
   return (
-    <div className="flex items-end justify-start overflow-x-scroll overflow-y-hidden mb-[18px] px-[12px] sm:px-0">
+    <div className="flex items-end justify-start overflow-x-scroll overflow-y-hidden scrollbar-none mb-[18px] px-[12px] sm:px-0">
       {categories.map((category) => (
         <button
           key={category.id}
